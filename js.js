@@ -15,6 +15,14 @@ let player3Points = 10;
 let player4Points = 10;
 let cardsInPlay;
 let lastClick = 0;
+
+
+
+
+
+
+
+
 function getApi(player) {
     /*Skriv din kod här*/
     fetch('https://deckofcardsapi.com/api/deck/new/draw/?count=1')
@@ -55,6 +63,9 @@ function removeCard(player, position) {
 
     player.removeChild(player.children[position]);
 
+}
+function aiPlay(player){
+    removeCard(player, 0);
 }
 
 function removeAllCards(player) {
@@ -114,6 +125,7 @@ btnCard1.addEventListener('click', function (event) {
     lastClick = thisClick;
 
     event.preventDefault();
+    
     removeCard(player3Area, 0);
     disableButton(player3Area);
 });
