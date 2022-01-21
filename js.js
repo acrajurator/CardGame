@@ -34,44 +34,52 @@ let lastClick = 0;
 
 
 
-function getApi(player, number, i) {
+async function getApi(player, number, i) {
     /*Skriv din kod här*/
-    fetch('https://deckofcardsapi.com/api/deck/new/draw/?count=1')
-        .then(res => res.json())
-        .then(data => {
-            var src = data['cards'][0]['image'];
-            img = document.createElement('img');
-            img.className = 'img-fluid';
-            img.src = src;
-            var elmnt = document.createElement("li");
-            elmnt.appendChild(img);
-            player.appendChild(elmnt);
-
-
-            if (number == 1) {
-                player1Cards[i] = (data['cards'][0]['value']);
-            }
-            else if (number == 2) {
-                player2Cards[i] = (data['cards'][0]['value']);
-
-            }
-            else if (number == 3) {
-                player3Cards[i] = (data['cards'][0]['value']);
-
-            }
-            else if (number == 4) {
-                player4Cards[i] = (data['cards'][0]['value']);
-
-            }
-
-
-        })
-        .catch(err => console.log('meh' + err))
-}
-function replacePlayersCards(player, number) {
-    for (let i = 0; i < 3; i++) {
-        getApi(player, number, i);
+    let response = await fetch('https://deckofcardsapi.com/api/deck/new/draw/?count=1')
+    
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
     }
+    let data = await response.json();
+    var src = data['cards'][0]['image'];
+    img = document.createElement('img');
+    img.className = 'img-fluid';
+    img.src = src;
+    var elmnt = document.createElement("li");
+    elmnt.appendChild(img);
+    player.appendChild(elmnt);
+
+
+    if (number == 1) {
+        player1Cards[i] = (data['cards'][0]['value']);
+    }
+    else if (number == 2) {
+        player2Cards[i] = (data['cards'][0]['value']);
+
+    }
+    else if (number == 3) {
+        player3Cards[i] = (data['cards'][0]['value']);
+
+    }
+    else if (number == 4) {
+        player4Cards[i] = (data['cards'][0]['value']);
+
+    }
+
+
+
+}
+async function replacePlayersCards(player, number) {
+    btn.disabled = true;
+    btnDraw.disabled = true;
+    for (let i = 0; i < 3; i++) {
+       await getApi(player, number, i);
+    }
+    btn.disabled = false;
+    btnDraw.disabled = false;
+    
+   
 }
 function playCard(card) {
 
@@ -111,12 +119,12 @@ function removeAllCards(player) {
         player.removeChild(player.children[0]);
 
 }
-function updateScore(){
-    
- player1LastValue = 0;
- player2LastValue = 0;
- player3LastValue = 0;
- player4LastValue = 0;
+function updateScore() {
+
+    player1LastValue = 0;
+    player2LastValue = 0;
+    player3LastValue = 0;
+    player4LastValue = 0;
 }
 btnDraw.addEventListener('click', function (event) {
     const thisClick = Date.now();
@@ -136,12 +144,12 @@ btnDraw.addEventListener('click', function (event) {
 
 
 btn.addEventListener('click', function (event) {
+
     const thisClick = Date.now();
-    if (thisClick - lastClick < 3000) {
+    if (thisClick - lastClick < 1000) {
         return;
     }
     lastClick = thisClick;
-
     event.preventDefault();
 
     btnCard1.disabled = false;
@@ -210,5 +218,5 @@ aiBtn.addEventListener('click', function (event) {
     aiPlay(player4Area, 4);
     aiPlay(player1Area, 1);
     aiPlay(player2Area, 2);
-    
+
 });
